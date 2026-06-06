@@ -7,8 +7,9 @@ using PrimeTween;
 public class EnemyAI : MonoBehaviour
 {
     public Transform target;
-    public SpriteRenderer spriteRenderer;
+    [SerializeField] private SpriteRenderer spriteRenderer;
 
+    public bool ReturnToPool { get; set; } = false;
     private NavMeshAgent agent;
     private bool isDead = false;
 
@@ -50,7 +51,14 @@ public class EnemyAI : MonoBehaviour
         }
         Debug.Log($"vfx: {vfx}");
         yield return new WaitWhile(() => vfx != null && vfx.activeInHierarchy);
-        Destroy(gameObject);
+        if (ReturnToPool)
+        {
+            EnemyManager.Instance.ReturnToPool(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
     }
 
     private void DeathAnimation(float duration)
